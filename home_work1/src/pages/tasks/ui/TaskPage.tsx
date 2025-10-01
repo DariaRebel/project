@@ -1,5 +1,4 @@
 import TaskWidget from 'widgets/task/ui/TaskWidget';
-//import styles from "./TaskPage.module.css"
 
 export function TaskPage() { 
     return (
