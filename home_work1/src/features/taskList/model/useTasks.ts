@@ -1,68 +1,66 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Task } from 'entities/task/model/types';
+import { v1 } from "uuid";
 
 export type Filter = 'all' | 'completed' | 'incomplete';
 
-//function useTasks(initial: Task[]): {
-   // tasks: Task[]; // отфильтрованные задачи
-    //filter: Filter; // текущий фильтр 
-    //setFilter: (f: Filter) => void; // смена фильтра 
-  //  removeTask: (id: string) => void; // удаление задачи по ID
-//}
-//import { useState } from "react";
-//import { User } from "entities/user/model/types";
 
 const initialTasks: Task[] = [
-  { id: '1', title: "read a book", completed: true },
-  { id: '2', title: "clean room", completed: false },
-  { id: '3', title: "play football", completed: true },
-  { id: '4', title: "help my friend", completed: false },
-  { id: '5', title: "cook dinner", completed: false },
+  { id: v1(), title: "read a book", completed: true },
+  { id: v1(), title: "clean room", completed: false },
+  { id: v1(), title: "play football", completed: true },
+  { id: v1(), title: "help my friend", completed: false },
+  { id: v1(), title: "cook dinner", completed: false },
 ];
 
 export function useTasks() {
     const [tasks, setTasks] = useState<Task[]>(initialTasks);
     const [filter, setFilter] = useState<Filter>("all");
+    const [newTask, setNewTask] = useState("");
 
-  const deleteTask = (id: string) => {
-    console.log(id);
-    setTasks(tasks.filter(task => task.id !== id));
-  };
+    const NewTask =(value: string) => setNewTask(value);
 
-  const changeStatus = (taskId: string, isCompleted: boolean) => {
-    const task = tasks.find(t => t.id === taskId);
-    if (task) {
-        task.completed = isCompleted;
+    const deleteTask = useCallback ((id: string) => {
+        setTasks(prev => prev.filter(task => task.id !== id));
+    }, []);
+
+    const addTask = (title: string) => {
+        const newTask ={ id: v1(), title: title, completed: false};
+        setTasks([newTask, ...tasks]);
+
     }
-    setTasks([...tasks]);
-  }
+    const changeStatus = (taskId: string, isCompleted: boolean) => {
+        const task = tasks.find(t => t.id === taskId);
+        if (task) {
+            task.completed = isCompleted;
+        }
+        setTasks([...tasks]);
+    }
 
-  //const filteredT = tasks.filter(task => task.completed === true)
+    const changeFilter = (value: Filter) => {
+        console.log(value)
+        setFilter(value);
+    }
 
-  const changeFilter = (value: Filter) => {
-    console.log(value)
-    setFilter(value);
-  }
+    const filtredTask= useMemo ( () => {
+        if (filter === "completed") {
+            return tasks.filter(task => task.completed === true)
+        }
+        if (filter === "incomplete") {
+             return tasks.filter(task => task.completed === false)
+        }
+        else return tasks;
+    }, [tasks, filter])
 
-  let filtredTask = tasks;
-  if (filter === "completed") {
-    filtredTask = tasks.filter(task => task.completed === true)
-  }
-  if (filter === "incomplete") {
-    filtredTask = tasks.filter(task => task.completed === false)
-  }
+    return {
+        tasks: filtredTask,
+        count: tasks.length,
+        deleteTask,
+        changeStatus,
+        changeFilter,
+        addTask,
+        newTask,
+        NewTask
 
-  //const filteredUsers = (completed: boolean) => {
-
-  //} users.filter(user =>
-   // user.name.toLowerCase().includes(filter.toLowerCase())
-  //);
-
-  return {
-    tasks: filtredTask,
-    count: tasks.length,
-    deleteTask,
-    changeStatus,
-    changeFilter
-  };
-}
+    };
+    }

@@ -1,4 +1,8 @@
 # React + TypeScript + Vite
+Домашнее задание 2
+В папке public есть два скрина: до мемоизации и после. Как видно из скринов время перерисовки уменьшилось примерно в раза. Значит оптимизация произошла благодаря оборачиванию фунций в хуки useMemo, useCallback и memo-компонента.
+
+_______________
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
