@@ -37,13 +37,13 @@ export function useTasks() {
     setTasks(prev => prev.filter(task => task.id !== id));
  }, []);
 
-    const changeStatus = (taskId: number, isCompleted: boolean) => {
-    const task = tasks.find(t => t.id === taskId);
-    if (task) {
-        task.completed = isCompleted;
-    }
-    setTasks([...tasks]);
-  }
+    const changeStatus = useCallback((taskId: number, isCompleted: boolean) => {
+    setTasks(prev =>
+    prev.map(t =>
+    t.id === taskId ? { ...t, completed: isCompleted } : t
+    )
+    );
+    }, []);
 
     const changeFilter = (value: Filter) => {
     console.log(value)

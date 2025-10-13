@@ -13,7 +13,7 @@ import styles from "./App.module.css";
             <div className={styles.body}>
                 <Outlet />
             </div>
-            <footer className={styles.foot}> @2025 homework 3</footer> 
+            <footer className={styles.foot}> @2025 homework 4</footer> 
 
         </div>
     )
