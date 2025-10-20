@@ -18,6 +18,10 @@
   min-height: 700px;
 }
 
+.text {
+  padding-right: 10px;
+}
+
 .foot {
     background-color: #414347;
     position: fixed;
