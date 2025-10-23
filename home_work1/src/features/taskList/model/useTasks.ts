@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Task } from 'entities/task/model/types';
+import { useGetTasksQuery } from "entities/task/api/tasksApi";
 
 export type Filter = 'all' | 'completed' | 'incomplete';
 
@@ -12,56 +13,55 @@ export type Filter = 'all' | 'completed' | 'incomplete';
 //import { useState } from "react";
 //import { User } from "entities/user/model/types";
 
-const initialTasks: Task[] = [
-  { id: '1', title: "read a book", completed: true },
-  { id: '2', title: "clean room", completed: false },
-  { id: '3', title: "play football", completed: true },
-  { id: '4', title: "help my friend", completed: false },
-  { id: '5', title: "cook dinner", completed: false },
-];
+// const initialTasks: Task[] = [
+//   { id: '1', title: "read a book", completed: true },
+//   { id: '2', title: "clean room", completed: false },
+//   { id: '3', title: "play football", completed: true },
+//   { id: '4', title: "help my friend", completed: false },
+//   { id: '5', title: "cook dinner", completed: false },
+// ];
 
 export function useTasks() {
-    const [tasks, setTasks] = useState<Task[]>(initialTasks);
+    const [tasks, setTasks] = useState<Task[]>([]);
     const [filter, setFilter] = useState<Filter>("all");
 
-  const deleteTask = (id: string) => {
-    console.log(id);
-    setTasks(tasks.filter(task => task.id !== id));
-  };
+    const { data: remoteTasks = [] } = useGetTasksQuery();
 
-  const changeStatus = (taskId: string, isCompleted: boolean) => {
-    const task = tasks.find(t => t.id === taskId);
-    if (task) {
-        task.completed = isCompleted;
-    }
-    setTasks([...tasks]);
-  }
+    useEffect(() => {
+      if (remoteTasks.length > 0 && tasks.length === 0) {
+        setTasks(remoteTasks);
+   }
+  }, [remoteTasks, tasks.length]);
 
-  //const filteredT = tasks.filter(task => task.completed === true)
+    const removeTask = useCallback ((id: number) => {
+    setTasks(prev => prev.filter(task => task.id !== id));
+ }, []);
 
-  const changeFilter = (value: Filter) => {
+    const changeStatus = useCallback((taskId: number, isCompleted: boolean) => {
+    setTasks(prev =>
+    prev.map(t =>
+    t.id === taskId ? { ...t, completed: isCompleted } : t
+    )
+    );
+    }, []);
+
+    const changeFilter = (value: Filter) => {
     console.log(value)
     setFilter(value);
   }
 
-  let filtredTask = tasks;
-  if (filter === "completed") {
-    filtredTask = tasks.filter(task => task.completed === true)
-  }
-  if (filter === "incomplete") {
-    filtredTask = tasks.filter(task => task.completed === false)
-  }
-
-  //const filteredUsers = (completed: boolean) => {
-
-  //} users.filter(user =>
-   // user.name.toLowerCase().includes(filter.toLowerCase())
-  //);
+    let filtredTask = tasks;
+    if (filter === "completed") {
+        filtredTask = tasks.filter(task => task.completed === true)
+    }
+    if (filter === "incomplete") {
+        filtredTask = tasks.filter(task => task.completed === false)
+    }
 
   return {
     tasks: filtredTask,
     count: tasks.length,
-    deleteTask,
+    removeTask,
     changeStatus,
     changeFilter
   };
