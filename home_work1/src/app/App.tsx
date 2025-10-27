@@ -1,9 +1,23 @@
-import { RouterConfig } from './Router';
+import { Outlet } from 'react-router';
+import { Box, Container } from '@mui/material';
+import { Header } from 'widgets/task/ui/Header';
+import { withProviders } from './providers';
 
-function App () {
-  return (
-    <RouterConfig />
-  );
-};
-
-export default App
+export const App = withProviders(() => {
+    return (
+        <>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minHeight: '100vh',
+                }}
+            >
+                <Header />
+                <Container maxWidth="lg" sx={{ py: 8 }}>
+                    <Outlet />
+                </Container>
+            </Box>
+        </>
+    );
+});
