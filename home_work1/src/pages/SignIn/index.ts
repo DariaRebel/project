@@ -1,1 +1,1 @@
-export { SignIn as SignInPage } from './ui';
+export { SignInPage } from './lazy';

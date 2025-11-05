@@ -1,13 +1,15 @@
 import { createBrowserRouter } from 'react-router';
-import { HomePage } from 'pages/home/ui/HomePage';
-import { SignInPage } from 'pages/SignIn';
-import { SignOutPage } from 'pages/SignOut';
 import { ProfilePage } from 'pages/Profile';
 import { SignUpPage } from 'pages/SignUp';
-
 import { App } from '../App';
+import { SignOutPage } from 'pages/SignOut';
 import { useContextAuthStrategy } from 'shared/lib/useContextAuthStrategy';
-import { ProtectionWrapper } from 'shared/lib/ui/ProtectionWrapper';
+//import { ProtectionWrapper } from 'shared/ui/ProtectionWrapper';
+import { SignInPage } from 'pages/SignIn';
+import { HomePage } from 'pages/home/ui/HomePage';
+import { withProtection } from 'shared/lib/withProtection';
+
+const ProfilePageWithProtection = withProtection(ProfilePage, useContextAuthStrategy);
 
 export const router = createBrowserRouter([
     {
@@ -20,11 +22,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'profile',
-                element: (
-                    <ProtectionWrapper useAuthStrategy={useContextAuthStrategy}>
-                        <ProfilePage />
-                    </ProtectionWrapper>
-                ),
+                element: <ProfilePageWithProtection />,
             },
             {
                 path: 'signUp',
